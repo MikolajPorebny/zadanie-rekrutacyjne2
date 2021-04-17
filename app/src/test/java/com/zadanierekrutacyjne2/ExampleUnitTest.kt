@@ -1,4 +1,4 @@
-package com.main.zadanierekrutacyjne
+package com.zadanierekrutacyjne2
 
 import org.junit.Test
 
