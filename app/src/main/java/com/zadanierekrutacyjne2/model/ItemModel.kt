@@ -21,12 +21,18 @@ class ItemModel {
 
     @ColumnInfo(name = "description")
     var description: String? = null
-    fun Sortowanie(itemModelList: List<ItemModel?>?) {
-        Collections.sort(itemModelList, object : Comparator<ItemModel?> {
-            override fun compare(o1: ItemModel?, o2: ItemModel?): Int {
-                return if (o1!!.orderId < o2!!.orderId) {
+    fun Sortowanie(itemModelList: List<ItemModel?>?)
+    {
+        Collections.sort(itemModelList, object : Comparator<ItemModel?>
+        {
+            override fun compare(o1: ItemModel?, o2: ItemModel?): Int
+            {
+                return if (o1!!.orderId < o2!!.orderId)
+                {
                     1
-                } else {
+                }
+                else
+                {
                     -1
                 }
             }
