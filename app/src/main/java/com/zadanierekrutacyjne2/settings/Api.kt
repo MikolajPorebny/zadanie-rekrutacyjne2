@@ -9,6 +9,7 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.zadanierekturacyjne2.model.ItemModel
+import org.json.JSONObject
 import java.util.*
 
 
@@ -86,13 +87,13 @@ object  Api {
         dialog.setCancelable(true)
         dialog.show()
         val queue = Volley.newRequestQueue(ctx)
-        val url = "https://recruitment-task.futuremind.dev/recruitment-task"
+        val url = "https://api.github.com/repositories"
         val stringRequest = StringRequest(Request.Method.GET, url,
                 { response ->
                     val listType = object : TypeToken<List<ItemModel?>?>() {}.type
                     val gSon = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
                     val lokalStan = gSon.fromJson<List<ItemModel?>>(response, listType)
-                    ItemModel().Sortowanie(lokalStan)
+                    //ItemModel().Sortowanie(lokalStan)
                     setItemList(lokalStan)
                     dialog.dismiss()
                 }) { error ->
@@ -116,14 +117,25 @@ object  Api {
         dialog.setCancelable(true)
         dialog.show()
         val queue = Volley.newRequestQueue(ctx)
-        val url = "https://recruitment-task.futuremind.dev/recruitment-task"
+        val url = "https://api.github.com/repositories"
+        //val url = "https://api.bitbucket.org/2.0/repositories?fields=values.name,values.owner,values.description"
         val stringRequest = StringRequest(Request.Method.GET, url,
                 { response ->
+/*
+                    val jsonObj = JSONObject(response.substring(response.indexOf("["), response.lastIndexOf("]") + 1))
+                    val foodJson = jsonObj.getJSONArray("Items")*/
+
+                    search for: gson read nested json
+
                     val listType = object : TypeToken<List<ItemModel?>?>() {}.type
                     val gSon = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
                     val lokalStan = gSon.fromJson<List<ItemModel?>>(response, listType)
-                    ItemModel().Sortowanie(lokalStan)
                     setItemListOnStart(lokalStan)
+
+
+
+
+                    //ItemModel().Sortowanie(lokalStan)
                     dialog.dismiss()
                 }) { error ->
             dialog.dismiss()

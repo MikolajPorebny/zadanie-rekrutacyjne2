@@ -32,7 +32,7 @@ class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?
         return itemModelList.size
     }
 
-    override fun getItem(position: Int): Any? {
+    override fun getItem(position: Int): Any {
         return position
     }
 
@@ -40,10 +40,10 @@ class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?
         return position.toLong()
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var convertView = convertView
         val itemModel: ItemModel
-        itemModel = itemModelList!![position]
+        itemModel = itemModelList[position]
         if (convertView == null) {
             val layoutInflater = LayoutInflater.from(context)
             convertView = layoutInflater.inflate(R.layout.item_model_adapter, null)
@@ -69,9 +69,9 @@ class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?
         } catch (ParseException e) {
             e.printStackTrace();
         }*/
+        /*
         val calendar = Calendar.getInstance()
-        @SuppressLint("SimpleDateFormat") val sdf = SimpleDateFormat("yyyy-MM-dd")
-        try {
+        @SuppressLint("SimpleDateFormat") val sdf = SimpleDateFormat("yyyy-MM-dd")try {
             calendar.time = sdf.parse(itemModel.modificationDate)
             val finalDate =
                 calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()) +
@@ -85,8 +85,9 @@ class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?
             textDate.text = finalDate
         } catch (e: ParseException) {
             e.printStackTrace()
-        }
-        textTitle.setText(itemModel.title)
+        }*/
+        textTitle.setText(itemModel.full_name)
+        /*
         val allMatches: MutableList<String?> = ArrayList()
         val regex = "^.*?(?=http)"
         val pattern = Pattern.compile(regex, Pattern.DOTALL)
@@ -98,9 +99,10 @@ class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?
             textDescription.text = allMatches[0]
         } else {
             textDescription.setText(itemModel.description)
-        }
-        Glide.with(context!!)
-            .load(itemModel.image_url)
+        }*/
+        textDescription.setText(itemModel.description)
+        Glide.with(context)
+            .load(itemModel.avatar_url)
             .timeout(1000)
             .placeholder(R.drawable.baseline_image_24)
             .error(R.drawable.baseline_running_with_errors_24)

@@ -10,17 +10,19 @@ class ItemModel {
     @PrimaryKey
     var orderId = 0
 
-    @ColumnInfo(name = "title")
-    var title: String? = null
+    @ColumnInfo(name = "name")
+    var full_name: String? = null
 
-    @ColumnInfo(name = "modificationDate")
-    var modificationDate: String? = null
+    @ColumnInfo(name = "user")
+    var login: String? = null
 
-    @ColumnInfo(name = "image_url")
-    var image_url: String? = null
+    @ColumnInfo(name = "avatar")
+    var avatar_url: String? = null
 
     @ColumnInfo(name = "description")
     var description: String? = null
+
+    /*
     fun Sortowanie(itemModelList: List<ItemModel?>?)
     {
         Collections.sort(itemModelList, object : Comparator<ItemModel?>
@@ -37,5 +39,5 @@ class ItemModel {
                 }
             }
         })
-    }
+    }*/
 }
