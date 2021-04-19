@@ -7,7 +7,7 @@ import androidx.room.Query
 @Dao
 interface ItemModelDao {
     @Query("SELECT * FROM itemModel")
-    fun getAll(): List<ItemModel?>?
+    fun getAll(): List<ItemModel>?
 
     @Query("SELECT description FROM itemModel WHERE orderId = :id")
     fun getItem(id: Int): String?

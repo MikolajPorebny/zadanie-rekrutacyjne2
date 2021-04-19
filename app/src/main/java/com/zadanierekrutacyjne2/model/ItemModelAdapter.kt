@@ -18,27 +18,26 @@ import java.util.*
 import java.util.regex.Pattern
 
 
-object ItemModelAdapter : BaseAdapter() {
+@SuppressLint("StaticFieldLeak")
+class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?) : BaseAdapter() {
 
 
-    private var context: Context? = null
-    private var itemModelList: List<ItemModel>? = null
-
-    fun ItemModelAdapter(itemModelList: List<ItemModel>?, context: Context?) {
+    /*
+    fun ItemModelAdapter(itemModelList: List<ItemModel>, context: Context?) {
         this.itemModelList = itemModelList
         this.context = context
-    }
+    }*/
 
     override fun getCount(): Int {
-        return itemModelList!!.size
+        return itemModelList.size
     }
 
     override fun getItem(position: Int): Any? {
-        return null
+        return position
     }
 
     override fun getItemId(position: Int): Long {
-        return 0
+        return position.toLong()
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
@@ -74,10 +73,15 @@ object ItemModelAdapter : BaseAdapter() {
         @SuppressLint("SimpleDateFormat") val sdf = SimpleDateFormat("yyyy-MM-dd")
         try {
             calendar.time = sdf.parse(itemModel.modificationDate)
-            val finalDate = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()) +
-                    " " + calendar[Calendar.DAY_OF_MONTH] +
-                    " " + calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()) +
-                    " " + calendar[Calendar.YEAR]
+            val finalDate =
+                calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()) +
+                        " " + calendar[Calendar.DAY_OF_MONTH] +
+                        " " + calendar.getDisplayName(
+                    Calendar.MONTH,
+                    Calendar.LONG,
+                    Locale.getDefault()
+                ) +
+                        " " + calendar[Calendar.YEAR]
             textDate.text = finalDate
         } catch (e: ParseException) {
             e.printStackTrace()
@@ -96,11 +100,11 @@ object ItemModelAdapter : BaseAdapter() {
             textDescription.setText(itemModel.description)
         }
         Glide.with(context!!)
-                .load(itemModel.image_url)
-                .timeout(1000)
-                .placeholder(R.drawable.baseline_image_24)
-                .error(R.drawable.baseline_running_with_errors_24)
-                .into(imageItem)
+            .load(itemModel.image_url)
+            .timeout(1000)
+            .placeholder(R.drawable.baseline_image_24)
+            .error(R.drawable.baseline_running_with_errors_24)
+            .into(imageItem)
         return convertView
     }
 

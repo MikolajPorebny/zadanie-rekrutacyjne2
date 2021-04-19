@@ -27,7 +27,7 @@ import java.util.regex.Pattern
 
 
 class MainActivity : AppCompatActivity() {
-    var itemModelList: MutableList<ItemModel?>? = null
+    var itemModelList: MutableList<ItemModel>? = null
 
     //boolean isTablet = false;
     var buttonReload: TextView? = null
@@ -42,28 +42,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         buttonReload = findViewById(R.id.buttonReload)
         gridItemList = findViewById(R.id.gridItemList)
-        //isTablet = getResources().getBoolean(R.bool.isTablet);
 
-        /*if (isTablet)
-        {
-            webDetail = findViewById(R.id.webDetail);
-        }*/if (appDatabase == null) {
+        if (appDatabase == null) {
             appDatabase = Room.databaseBuilder(applicationContext,
                     AppDatabase::class.java, "database-name").allowMainThreadQueries().build()
         }
         itemModelDao = appDatabase!!.ItemModelDao()
-        itemModelList = itemModelDao?.getAll() as MutableList<ItemModel?>?
-        val itemModelAdapter = ItemModelAdapter
-        gridItemList?.setAdapter(itemModelAdapter)
+        itemModelList = itemModelDao?.getAll() as MutableList<ItemModel>
+        val itemModelAdapter = ItemModelAdapter(itemModelList!!, applicationContext)
+        gridItemList!!.setAdapter(itemModelAdapter)
         Api.addItemListListener(object : ICallApi {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @SuppressLint("SetTextI18n")
             override fun OnCallApi() {
-                itemModelList = Api.getItemList() as MutableList<ItemModel?>?
+                itemModelList = Api.getItemList() as MutableList<ItemModel>?
                 appDatabase!!.clearAllTables()
                 itemModelDao!!::insert?.let { itemModelList!!.forEach(it) }
                 itemModelList?.clear()
-                itemModelList = itemModelDao!!.getAll() as MutableList<ItemModel?>?
+                itemModelList = itemModelDao!!.getAll() as MutableList<ItemModel>?
             }
         })
         Api.addApiErrorListener(object : ICallApiError {
@@ -73,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, which -> dialog.dismiss() }
                 alertDialog.setOnShowListener { alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.black)) }
                 alertDialog.show()
-                itemModelList = itemModelDao?.getAll() as MutableList<ItemModel?>?
+                itemModelList = itemModelDao?.getAll() as MutableList<ItemModel>?
             }
         })
         buttonReload?.setOnClickListener(View.OnClickListener { Api.callApi(this@MainActivity) })
