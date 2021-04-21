@@ -7,7 +7,7 @@ import java.util.*
 
 @Entity(tableName = "itemModel")
 class ItemModel {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var orderId = 0
 
     @ColumnInfo(name = "name")

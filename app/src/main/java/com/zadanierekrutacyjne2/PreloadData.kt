@@ -19,7 +19,7 @@ import com.zadanierekturacyjne2.settings.AppDatabase
 
 public class PreloadData : AppCompatActivity() {
 
-    var itemModelList: List<ItemModel>? = null
+    var itemModelList: MutableList<ItemModel>? = null
     var appDatabase: AppDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,27 +35,30 @@ public class PreloadData : AppCompatActivity() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @SuppressLint("SetTextI18n")
             override fun OnCallApiOnStart() {
-                itemModelList = Api.getItemList() as List<ItemModel>?
-                appDatabase!!.clearAllTables()
-                itemModelDao!!::insert?.let { itemModelList!!.forEach(it) }
-                val si = Intent(applicationContext, MainActivity::class.java)
-                si.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                applicationContext.startActivity(si)
-            }
-        })
-        Api.addApiErrorListenerOnStart(object : ICallApiErrorOnStart {
-            override fun OnCallApiErrorOnStart() {
-                val alertDialog = AlertDialog.Builder(this@PreloadData, R.style.AlertDialog).create()
-                alertDialog.setMessage("Błąd pobierania danych!\nDane będą załadowane z pamięci podręcznej.")
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, which ->
-                    val si = Intent(applicationContext, MainActivity::class.java)
-                    si.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    applicationContext.startActivity(si)
-                    dialog.dismiss()
+                var errorString: String? = Api.getError()
+                if (errorString?.contains("bit") == true)
+                {
+                    if (errorString?.contains("git") == true)
+                    {
+                        Start()
+                    }
                 }
-                alertDialog.setOnShowListener { alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.black)) }
-                alertDialog.show()
+                itemModelList = Api.getItemList() as MutableList<ItemModel>?
+                appDatabase!!.clearAllTables()
+
+                for (item in itemModelList!!)
+                {
+                    itemModelDao?.insert(item)
+                }
+                Start()
             }
         })
+    }
+
+    fun Start()
+    {
+        val si = Intent(applicationContext, MainActivity::class.java)
+        si.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        applicationContext.startActivity(si)
     }
 }

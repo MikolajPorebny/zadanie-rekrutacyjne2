@@ -1,13 +1,16 @@
 package com.zadanierekrutacyjne2.settings
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
+import android.graphics.Color
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.zadanierekrutacyjne2.R
 import com.zadanierekrutacyjne2.model.loadmodel.ItemModelApiBit
 import com.zadanierekrutacyjne2.model.loadmodel.ItemModelApiGit
 import com.zadanierekturacyjne2.model.ItemModel
@@ -22,32 +25,29 @@ object  Api {
     private val ICallApiError: MutableList<ICallApiError> = ArrayList()
     private val ICallApiOnStart: MutableList<ICallApiOnStart> = ArrayList()
     private val ICallApiErrorOnStart: MutableList<ICallApiErrorOnStart> = ArrayList()
-    private var error: String? = null
+    private var errorString: String = "error "
 
 
 
     var TIMEOUT_MS = 10000
 
 
-    fun getItemList(): List<ItemModel?>? {
+    fun getItemList(): List<ItemModel>? {
         return listItem
     }
-    //public static String getError() {return error;}
 
-    //public static String getError() {return error;}
-    fun setItemList(value: List<ItemModel>?) {
-        listItem = value as MutableList<ItemModel>
+    fun getError(): String? {
+        return errorString
+    }
+
+
+    fun CallListners() {
         for (l in ICallApi) {
             l.OnCallApi()
         }
     }
 
-    fun setError(value: String?) {
-        error = value
-        for (l in ICallApiError) {
-            l.OnCallApiError()
-        }
-    }
+
 
     fun setItemListBitSync(value: List<ItemModelApiBit?>) {
         for (item in value)
@@ -76,20 +76,11 @@ object  Api {
         }
     }
 
-    fun setItemListOnStart(value: List<ItemModel>?) {
-        listItem = value as MutableList<ItemModel>
+    fun CallListnersOnStart() {
         for (l in ICallApiOnStart) {
             l.OnCallApiOnStart()
         }
     }
-
-    fun setErrorOnStart(value: String?) {
-        error = value
-        for (l in ICallApiErrorOnStart) {
-            l.OnCallApiErrorOnStart()
-        }
-    }
-
 
     fun addItemListListener(l: ICallApi) {
         ICallApi.add(l)
@@ -132,7 +123,6 @@ object  Api {
                     dialog.dismiss()
                 }) { error ->
             dialog.dismiss()
-            setError(error.message)
         }
         stringRequest.retryPolicy = DefaultRetryPolicy(
                 TIMEOUT_MS,
@@ -168,9 +158,17 @@ object  Api {
                     callApiOnStarGit(ctx)
                     dialog.dismiss()
                 }) { error ->
-            callApiOnStarGit(ctx)
-            setErrorOnStart(error.message)
+            errorString += "bit "
             dialog.dismiss()
+            val alertDialog = AlertDialog.Builder(ctx, R.style.AlertDialog).create()
+            alertDialog.setMessage("Błąd pobierania danych z Bitbicket!\nTe dane będą załadowane z pamięci podręcznej.")
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, which ->
+                callApiOnStarGit(ctx)
+                alertDialog.dismiss()
+            }
+            alertDialog.setOnShowListener { alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK) }
+            alertDialog.show()
+
         }
         stringRequest.retryPolicy = DefaultRetryPolicy(
                 TIMEOUT_MS,
@@ -178,6 +176,8 @@ object  Api {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         queue.add(stringRequest)
     }
+
+
 
     fun callApiOnStarGit(ctx: Context?) {
 
@@ -199,9 +199,18 @@ object  Api {
 
                     setItemListGitSync(lokalStan)
                     dialog.dismiss()
+                    CallListnersOnStart()
                 }) { error ->
-            setErrorOnStart(error.message)
+            errorString += "git"
             dialog.dismiss()
+            val alertDialog = AlertDialog.Builder(ctx, R.style.AlertDialog).create()
+            alertDialog.setMessage("Błąd pobierania danych z Gita!\nTe dane będą załadowane z pamięci podręcznej.")
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, which ->
+                alertDialog.dismiss()
+                CallListnersOnStart()
+            }
+            alertDialog.setOnShowListener { alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK) }
+            alertDialog.show()
         }
         stringRequest.retryPolicy = DefaultRetryPolicy(
                 TIMEOUT_MS,
