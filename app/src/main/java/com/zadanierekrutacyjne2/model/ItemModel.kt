@@ -11,16 +11,19 @@ class ItemModel {
     var orderId = 0
 
     @ColumnInfo(name = "name")
-    var full_name: String? = null
+    var name: String? = null
 
     @ColumnInfo(name = "user")
-    var login: String? = null
+    var user: String? = null
 
     @ColumnInfo(name = "avatar")
-    var avatar_url: String? = null
+    var avatar: String? = null
 
     @ColumnInfo(name = "description")
     var description: String? = null
+
+    @ColumnInfo(name = "repo")
+    var repo: String? = null
 
     /*
     fun Sortowanie(itemModelList: List<ItemModel?>?)

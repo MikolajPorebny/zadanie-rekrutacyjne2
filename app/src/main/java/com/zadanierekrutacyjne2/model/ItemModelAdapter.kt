@@ -86,7 +86,7 @@ class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?
         } catch (e: ParseException) {
             e.printStackTrace()
         }*/
-        textTitle.setText(itemModel.full_name)
+        textTitle.setText(itemModel.name)
         /*
         val allMatches: MutableList<String?> = ArrayList()
         val regex = "^.*?(?=http)"
@@ -102,7 +102,7 @@ class ItemModelAdapter(val itemModelList: List<ItemModel>, val context: Context?
         }*/
         textDescription.setText(itemModel.description)
         Glide.with(context)
-            .load(itemModel.avatar_url)
+            .load(itemModel.avatar)
             .timeout(1000)
             .placeholder(R.drawable.baseline_image_24)
             .error(R.drawable.baseline_running_with_errors_24)

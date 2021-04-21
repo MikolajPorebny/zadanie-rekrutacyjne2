@@ -30,7 +30,7 @@ public class PreloadData : AppCompatActivity() {
                     AppDatabase::class.java, "database-name").allowMainThreadQueries().build()
         }
         val itemModelDao = appDatabase!!.ItemModelDao()
-        Api.callApiOnStart(this@PreloadData)
+        Api.callApiOnStartBit(this@PreloadData)
         Api.addItemListListenerOnStart(object : ICallApiOnStart {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @SuppressLint("SetTextI18n")
