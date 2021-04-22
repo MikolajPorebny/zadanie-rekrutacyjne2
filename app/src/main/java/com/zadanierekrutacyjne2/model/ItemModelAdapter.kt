@@ -17,13 +17,6 @@ import com.zadanierekturacyjne2.model.ItemModel
 @SuppressLint("StaticFieldLeak")
 class ItemModelAdapter(var itemModelListAdapter: MutableList<ItemModel>, val context: Context?) : BaseAdapter() {
 
-
-    /*
-    fun ItemModelAdapter(itemModelList: List<ItemModel>, context: Context?) {
-        this.itemModelList = itemModelList
-        this.context = context
-    }*/
-
     override fun getCount(): Int {
         return itemModelListAdapter.size
     }
@@ -37,8 +30,6 @@ class ItemModelAdapter(var itemModelListAdapter: MutableList<ItemModel>, val con
     }
 
     fun updateList(newlist: List<ItemModel>) {
-        //itemModelListAdapter.clear()
-        //itemModelListAdapter.addAll(newlist)
         itemModelListAdapter = newlist as MutableList<ItemModel>
         notifyDataSetChanged()
     }
@@ -61,7 +52,7 @@ class ItemModelAdapter(var itemModelListAdapter: MutableList<ItemModel>, val con
         if (position % 2 == 0) {
             if (itemModel.repo=="bit")
             {
-                adapterLayout.setBackgroundColor(context!!.resources.getColor(R.color.blue_even))
+                adapterLayout.setBackgroundColor(context!!.resources.getColor(R.color.blue))
             }
             else
             {
@@ -72,7 +63,7 @@ class ItemModelAdapter(var itemModelListAdapter: MutableList<ItemModel>, val con
         {
             if (itemModel.repo=="bit")
             {
-                adapterLayout.setBackgroundColor(context!!.resources.getColor(R.color.blue))
+                adapterLayout.setBackgroundColor(context!!.resources.getColor(R.color.blue_even))
             }
             else
             {
