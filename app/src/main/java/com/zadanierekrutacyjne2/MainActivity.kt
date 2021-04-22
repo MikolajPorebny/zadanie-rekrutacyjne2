@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import android.widget.GridView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -17,10 +18,11 @@ import com.zadanierekrutacyjne2.settings.ICallApi
 import com.zadanierekturacyjne2.model.ItemModel
 import com.zadanierekturacyjne2.model.ItemModelDao
 import com.zadanierekturacyjne2.settings.AppDatabase
+import java.util.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
-    var itemModelList: MutableList<ItemModel>? = null
+    var itemModelListMain: MutableList<ItemModel>? = null
 
 
     var buttonReload: TextView? = null
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     var appDatabase: AppDatabase? = null
     var itemModelDao: ItemModelDao? = null
     var gridItemList: GridView? = null
-
+    var itemModelAdapter: ItemModelAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,22 +47,22 @@ class MainActivity : AppCompatActivity() {
 
 
         itemModelDao = appDatabase!!.ItemModelDao()
-        itemModelList = itemModelDao?.getAll() as MutableList<ItemModel>
-        var itemModelAdapter = ItemModelAdapter(itemModelList!!, applicationContext)
+        itemModelListMain = itemModelDao?.getAll() as MutableList<ItemModel>
+        itemModelAdapter = ItemModelAdapter(itemModelListMain!!, applicationContext)
         gridItemList!!.setAdapter(itemModelAdapter)
         Api.addItemListListener(object : ICallApi {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @SuppressLint("SetTextI18n")
             override fun OnCallApi() {
-                itemModelList?.clear()
-                itemModelList = Api.getItemList() as MutableList<ItemModel>
+                itemModelListMain?.clear()
+                itemModelListMain = Api.getItemList() as MutableList<ItemModel>
                 var errorString: String? = Api.getError()
                 if (errorString?.contains("bit") == true)
                 {
                     if (errorString?.contains("git") == true)
                     {
-                        itemModelList = itemModelDao?.getAll() as MutableList<ItemModel>
-                        itemModelAdapter.updateReceiptsList(itemModelList!!)
+                        itemModelListMain = itemModelDao?.getAll() as MutableList<ItemModel>
+                        itemModelAdapter?.updateList(itemModelListMain!!)
                         return
                     }
                     else
@@ -80,27 +82,28 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                for (item in itemModelList!!)
+                for (item in itemModelListMain!!)
                 {
                     itemModelDao?.insert(item)
                 }
 
-                itemModelAdapter.updateReceiptsList(itemModelList!!)
-                //itemModelAdapter = ItemModelAdapter(itemModelList!!, applicationContext)
-                //itemModelList = itemModelDao?.getAll() as MutableList<ItemModel>
-                //itemModelAdapter.notifyDataSetChanged()
+                itemModelAdapter?.updateList(itemModelListMain!!)
             }
         })
-        buttonReload?.setOnClickListener(View.OnClickListener {
+        buttonReload?.setOnClickListener({
             Api.callApiBit(this@MainActivity)
         })
-        buttonSort?.setOnClickListener(View.OnClickListener {
+        buttonSort?.setOnClickListener({
+            itemModelListMain?.sortWith(
+                compareBy(String.CASE_INSENSITIVE_ORDER, { it.name.toString() })
+            )
+            itemModelAdapter?.updateList(itemModelListMain!!)
 
         })
-        /*gridItemList?.setOnItemClickListener(OnItemClickListener { parent, view, position, _ ->
+        gridItemList?.setOnItemClickListener({ parent, view, position, _ ->
             val ctx1 = applicationContext
             Start(position, ctx1)
-        })*/
+        })
     }
 
 

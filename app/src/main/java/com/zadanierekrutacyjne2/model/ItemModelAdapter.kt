@@ -15,7 +15,7 @@ import com.zadanierekturacyjne2.model.ItemModel
 
 
 @SuppressLint("StaticFieldLeak")
-class ItemModelAdapter(val itemModelList: MutableList<ItemModel>, val context: Context?) : BaseAdapter() {
+class ItemModelAdapter(var itemModelListAdapter: MutableList<ItemModel>, val context: Context?) : BaseAdapter() {
 
 
     /*
@@ -25,7 +25,7 @@ class ItemModelAdapter(val itemModelList: MutableList<ItemModel>, val context: C
     }*/
 
     override fun getCount(): Int {
-        return itemModelList.size
+        return itemModelListAdapter.size
     }
 
     override fun getItem(position: Int): Any {
@@ -36,9 +36,10 @@ class ItemModelAdapter(val itemModelList: MutableList<ItemModel>, val context: C
         return position.toLong()
     }
 
-    fun updateReceiptsList(newlist: MutableList<ItemModel>) {
-        itemModelList.clear()
-        itemModelList.addAll(newlist)
+    fun updateList(newlist: List<ItemModel>) {
+        //itemModelListAdapter.clear()
+        //itemModelListAdapter.addAll(newlist)
+        itemModelListAdapter = newlist as MutableList<ItemModel>
         notifyDataSetChanged()
     }
 
@@ -47,7 +48,7 @@ class ItemModelAdapter(val itemModelList: MutableList<ItemModel>, val context: C
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var convertView = convertView
         val itemModel: ItemModel
-        itemModel = itemModelList[position]
+        itemModel = itemModelListAdapter[position]
         if (convertView == null) {
             val layoutInflater = LayoutInflater.from(context)
             convertView = layoutInflater.inflate(R.layout.item_model_adapter, null)

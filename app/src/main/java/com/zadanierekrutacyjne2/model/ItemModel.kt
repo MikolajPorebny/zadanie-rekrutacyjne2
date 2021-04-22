@@ -25,22 +25,6 @@ class ItemModel {
     @ColumnInfo(name = "repo")
     var repo: String? = null
 
-    /*
-    fun Sortowanie(itemModelList: List<ItemModel?>?)
-    {
-        Collections.sort(itemModelList, object : Comparator<ItemModel?>
-        {
-            override fun compare(o1: ItemModel?, o2: ItemModel?): Int
-            {
-                return if (o1!!.orderId < o2!!.orderId)
-                {
-                    1
-                }
-                else
-                {
-                    -1
-                }
-            }
-        })
-    }*/
+
+
 }
