@@ -20,19 +20,24 @@ import java.util.*
 object  Api {
 
     private val TAG = "Pobieranie danych..."
-    private var listItem = mutableListOf<ItemModel>()
+    var listItem = mutableListOf<ItemModel>()
     private val ICallApi: MutableList<ICallApi> = ArrayList()
-    private val ICallApiError: MutableList<ICallApiError> = ArrayList()
     private val ICallApiOnStart: MutableList<ICallApiOnStart> = ArrayList()
-    private val ICallApiErrorOnStart: MutableList<ICallApiErrorOnStart> = ArrayList()
     private var errorString: String = "error "
 
 
 
     var TIMEOUT_MS = 10000
 
+    fun addItemListListener(l: ICallApi) {
+        ICallApi.add(l)
+    }
 
-    fun getItemList(): List<ItemModel>? {
+    fun addItemListListenerOnStart(l: ICallApiOnStart) {
+        ICallApiOnStart.add(l)
+    }
+
+    fun getItemList(): List<ItemModel> {
         return listItem
     }
 
@@ -40,16 +45,22 @@ object  Api {
         return errorString
     }
 
-
     fun CallListners() {
+
         for (l in ICallApi) {
             l.OnCallApi()
         }
     }
 
+    fun CallListnersOnStart() {
+        for (l in ICallApiOnStart) {
+            l.OnCallApiOnStart()
+        }
+    }
 
 
     fun setItemListBitSync(value: List<ItemModelApiBit?>) {
+        listItem.clear()
         for (item in value)
         {
             val itemModel = ItemModel()
@@ -76,30 +87,7 @@ object  Api {
         }
     }
 
-    fun CallListnersOnStart() {
-        for (l in ICallApiOnStart) {
-            l.OnCallApiOnStart()
-        }
-    }
-
-    fun addItemListListener(l: ICallApi) {
-        ICallApi.add(l)
-    }
-
-    fun addApiErrorListener(l: ICallApiError) {
-        ICallApiError.add(l)
-    }
-
-    fun addItemListListenerOnStart(l: ICallApiOnStart) {
-        ICallApiOnStart.add(l)
-    }
-
-    fun addApiErrorListenerOnStart(l: ICallApiErrorOnStart) {
-        ICallApiErrorOnStart.add(l)
-    }
-
-
-    fun callApi(ctx: Context?) {
+    fun callApiBit(ctx: Context?) {
         val dialog: ProgressDialog
         dialog = ProgressDialog(ctx)
         dialog.setMessage("Proszę czekać...")
@@ -108,21 +96,75 @@ object  Api {
         dialog.setCancelable(true)
         dialog.show()
         val queue = Volley.newRequestQueue(ctx)
+        val url = "https://api.bitbucket.org/2.0/repositories?fields=values.name,values.owner,values.description"
+        val stringRequest = StringRequest(Request.Method.GET, url,
+                { response ->
+
+
+                    val listType = object : TypeToken<List<ItemModelApiBit?>?>() {}.type
+                    val gSon = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
+
+                    val index = response.indexOf(':')
+                    val substringedResponse1 = response.substring(index+1)
+                    val substringedResponse2 = substringedResponse1.substringBeforeLast('}')
+
+                    val lokalStan = gSon.fromJson<List<ItemModelApiBit?>>(substringedResponse2, listType)
+
+                    setItemListBitSync(lokalStan)
+                    callApiGit(ctx)
+                    dialog.dismiss()
+                }) { error ->
+            errorString += "bit "
+            dialog.dismiss()
+            val alertDialog = AlertDialog.Builder(ctx, R.style.AlertDialog).create()
+            alertDialog.setMessage("Błąd pobierania danych z Bitbucket!\nTe dane będą załadowane z pamięci podręcznej.")
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, which ->
+                alertDialog.dismiss()
+                callApiGit(ctx)
+            }
+            alertDialog.setOnShowListener { alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK) }
+            alertDialog.show()
+        }
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+                TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        queue.add(stringRequest)
+    }
+
+    fun callApiGit(ctx: Context?)
+    {
+        val dialog: ProgressDialog
+        dialog = ProgressDialog(ctx)
+        dialog.setMessage("Proszę czekać...")
+        dialog.setCancelable(false)
+        dialog.setInverseBackgroundForced(false)
+        dialog.setCancelable(true)
+        dialog.show()
+
+        val queue = Volley.newRequestQueue(ctx)
         val url = "https://api.github.com/repositories"
         val stringRequest = StringRequest(Request.Method.GET, url,
                 { response ->
-                    //listItem?.toMutableList()?.clear()
 
-
-
-                    val listType = object : TypeToken<List<ItemModel?>?>() {}.type
+                    val listType = object : TypeToken<List<ItemModelApiGit>?>() {}.type
                     val gSon = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
-                    val lokalStan = gSon.fromJson<List<ItemModel?>>(response, listType)
+                    val lokalStan = gSon.fromJson<List<ItemModelApiGit?>>(response, listType)
 
-
+                    setItemListGitSync(lokalStan)
                     dialog.dismiss()
+                    CallListners()
                 }) { error ->
+            errorString += "git"
             dialog.dismiss()
+            val alertDialog = AlertDialog.Builder(ctx, R.style.AlertDialog).create()
+            alertDialog.setMessage("Błąd pobierania danych z Gita!\nTe dane będą załadowane z pamięci podręcznej.")
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, which ->
+                alertDialog.dismiss()
+                CallListners()
+            }
+            alertDialog.setOnShowListener { alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK) }
+            alertDialog.show()
         }
         stringRequest.retryPolicy = DefaultRetryPolicy(
                 TIMEOUT_MS,
@@ -161,10 +203,10 @@ object  Api {
             errorString += "bit "
             dialog.dismiss()
             val alertDialog = AlertDialog.Builder(ctx, R.style.AlertDialog).create()
-            alertDialog.setMessage("Błąd pobierania danych z Bitbicket!\nTe dane będą załadowane z pamięci podręcznej.")
+            alertDialog.setMessage("Błąd pobierania danych z Bitbucket!\nTe dane będą załadowane z pamięci podręcznej.")
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, which ->
-                callApiOnStarGit(ctx)
                 alertDialog.dismiss()
+                callApiOnStarGit(ctx)
             }
             alertDialog.setOnShowListener { alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK) }
             alertDialog.show()

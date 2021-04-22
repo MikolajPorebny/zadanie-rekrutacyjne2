@@ -8,58 +8,50 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imageItem"
+        android:id="@+id/imgAvatar"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="imageItem"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/baseline_image_24"
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/textTitle"
+        android:id="@+id/textName"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="Tytuł"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/imageItem"
-        app:layout_constraintBottom_toTopOf="@+id/textDate"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/textDate"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:gravity="center"
-        android:text="Data"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/textTitle"
-        app:layout_constraintStart_toEndOf="@+id/imageItem"
-        app:layout_constraintBottom_toBottomOf="@+id/imageItem"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/textDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Opis"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="Tytuł"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/textDate"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textUser"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgAvatar"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textUser"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="Data"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/imgAvatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgAvatar"
+        app:layout_constraintTop_toBottomOf="@+id/textName"
+        tools:ignore="HardcodedText" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,6 @@
 package com.zadanierekrutacyjne2
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,14 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 
 import com.zadanierekrutacyjne2.settings.Api
-import com.zadanierekrutacyjne2.settings.ICallApiErrorOnStart
 import com.zadanierekrutacyjne2.settings.ICallApiOnStart
 import com.zadanierekturacyjne2.model.ItemModel
 import com.zadanierekturacyjne2.settings.AppDatabase
 
 
 
-public class PreloadData : AppCompatActivity() {
+class PreloadData : AppCompatActivity() {
 
     var itemModelList: MutableList<ItemModel>? = null
     var appDatabase: AppDatabase? = null
@@ -25,7 +23,6 @@ public class PreloadData : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (appDatabase == null) {
-            //appDatabase = Room.databaseBuilder(applicationContext, AppDatabase::class.java)
             appDatabase = Room.databaseBuilder(applicationContext,
                     AppDatabase::class.java, "database-name").allowMainThreadQueries().build()
         }
@@ -41,11 +38,25 @@ public class PreloadData : AppCompatActivity() {
                     if (errorString?.contains("git") == true)
                     {
                         Start()
+                        return
+                    }
+                    else
+                    {
+                        itemModelDao?.delGit()
                     }
                 }
-                itemModelList = Api.getItemList() as MutableList<ItemModel>?
-                appDatabase!!.clearAllTables()
-
+                else
+                {
+                    if (errorString?.contains("git") == true)
+                    {
+                        itemModelDao?.delBit()
+                    }
+                    else
+                    {
+                        appDatabase!!.clearAllTables()
+                    }
+                }
+                itemModelList = Api.getItemList() as MutableList<ItemModel>
                 for (item in itemModelList!!)
                 {
                     itemModelDao?.insert(item)
@@ -60,5 +71,6 @@ public class PreloadData : AppCompatActivity() {
         val si = Intent(applicationContext, MainActivity::class.java)
         si.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         applicationContext.startActivity(si)
+        finish()
     }
 }
